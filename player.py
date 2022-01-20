@@ -36,14 +36,14 @@ class Player(pygame.sprite.Sprite):
         if self.game_mode == "Neuroevolution":
             self.fitness = 0  # Initial fitness
 
-            layer_sizes = [3, 20, 20, 2]  # TODO (Design your architecture here by changing the values)
+            layer_sizes = [2 * player_smartness + 2, 20, 20, 2]
             self.nn = NeuralNetwork(layer_sizes)
 
         self.player_smartness = player_smartness
 
     def make_neural_network_input(self, player_x, player_y, obstacles):
         arr = [player_x, player_y]
-        for i in range(3):
+        for i in range(self.player_smartness):
             arr.append(obstacles[i]['x'])
             arr.append(obstacles[i]['y'])
         return np.array([arr]).T
