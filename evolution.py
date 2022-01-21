@@ -1,4 +1,5 @@
 import copy
+import time
 
 from player import Player
 
@@ -15,7 +16,8 @@ class Evolution:
         :param players: list of players in the previous generation
         :param num_players: number of players that we return
         """
-        # TODO (Implement top-k algorithm here)
+        players.sort()
+        print('best and worst fitness', players[0].fitness, players[1].fitness)
         # TODO (Additional: Implement roulette wheel here)
         # TODO (Additional: Implement SUS here)
 

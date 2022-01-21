@@ -44,8 +44,12 @@ class Player(pygame.sprite.Sprite):
     def make_neural_network_input(self, player_x, player_y, obstacles):
         arr = [player_x / 604, player_y / 656]
         for i in range(self.player_smartness):
-            arr.append(obstacles[i]['x'] / 604)
-            arr.append(obstacles[i]['y'] / 656)
+            if i >= len(obstacles):
+                arr.append(1.0)
+                arr.append(1.0)
+            else:
+                arr.append(obstacles[i]['x'] / 604)
+                arr.append(obstacles[i]['y'] / 656)
         return np.array([arr]).T
 
     def think(self, screen_width, screen_height, obstacles, player_x, player_y):
@@ -141,13 +145,13 @@ class Player(pygame.sprite.Sprite):
             self.player_walk[i] = pygame.transform.flip(player_surface, flip_x=True, flip_y=False)
 
     def __gt__(self, other):
-        return self.fitness > other.fitness
-
-    def __lt__(self, other):
         return self.fitness < other.fitness
 
+    def __lt__(self, other):
+        return self.fitness > other.fitness
+
     def __ge__(self, other):
-        return self.fitness >= other.fitness
+        return self.fitness <= other.fitness
 
     def __le__(self, other):
-        return self.fitness <= other.fitness
+        return self.fitness >= other.fitness
