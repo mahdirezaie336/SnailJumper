@@ -39,7 +39,16 @@ class Evolution:
             return [Player(self.game_mode) for _ in range(num_players)]
         else:
             # TODO ( Parent selection and child generation )
-            new_players = [self.clone_player(player) for player in prev_players]
+            new_players = []
+            for i in range(0, len(prev_players), 2):
+                player1 = prev_players[i]
+                player2 = prev_players[i+1]
+                child1, child2 = self.cross_over(player1, player2)
+                new_players.append(child1)
+                new_players.append(child2)
+
+                if len(new_players) >= num_players:
+                    break
 
             return new_players
 
