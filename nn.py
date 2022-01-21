@@ -51,3 +51,16 @@ class NeuralNetwork:
             o = self.activation(W[i].T.dot(o) + b[i].T)
             result.append(o)
         return result
+
+    def swap_perceptron(self, other, layer_number, p):
+
+        if not isinstance(other, NeuralNetwork):
+            raise TypeError('Is not a neuralnetwork.')
+
+        self_layer = self.weights[layer_number]
+        other_layer = other.weights[layer_number]
+        self_bias = self.biases[layer_number]
+        other_bias = other.biases[layer_number]
+
+        self_layer[:, [p]], other_layer[:, [p]] = other_layer[:, [p]], self_layer[:, [p]]
+        self_bias[[p], :], other_bias[[p], :] = other_bias[[p], :], self_bias[[p], :]

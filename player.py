@@ -1,3 +1,4 @@
+import copy
 import random
 
 import pygame
@@ -143,6 +144,18 @@ class Player(pygame.sprite.Sprite):
         """
         for i, player_surface in enumerate(self.player_walk):
             self.player_walk[i] = pygame.transform.flip(player_surface, flip_x=True, flip_y=False)
+
+    def swap_perceptron(self, other_player, layer_number, perceptron_number):
+        self.nn.swap_perceptron(other_player.nn, layer_number, perceptron_number)
+
+    def clone(self):
+        new_player = Player(self.game_mode)
+        new_player.nn = copy.deepcopy(self.nn)
+        new_player.fitness = self.fitness
+        return new_player
+
+    def __copy__(self):
+        return self.clone()
 
     def __gt__(self, other):
         return self.fitness < other.fitness

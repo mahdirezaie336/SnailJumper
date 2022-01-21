@@ -5,8 +5,9 @@ from player import Player
 
 
 class Evolution:
-    def __init__(self):
+    def __init__(self, cross_over_probability=0.5):
         self.game_mode = "Neuroevolution"
+        self.cross_over_probability = cross_over_probability
 
     def next_population_selection(self, players, num_players):
         """
@@ -37,8 +38,12 @@ class Evolution:
             return [Player(self.game_mode) for _ in range(num_players)]
         else:
             # TODO ( Parent selection and child generation )
-            new_players = prev_players  # DELETE THIS AFTER YOUR IMPLEMENTATION
+            new_players = [self.clone_player(player) for player in prev_players]
+
             return new_players
+
+    def cross_over(self):
+        pass
 
     def clone_player(self, player):
         """
