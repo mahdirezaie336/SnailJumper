@@ -13,6 +13,7 @@ class NeuralNetwork:
         self.weights = []
         self.biases = []
         self.learning_rate = learning_rate
+        self.layer_sizes = layer_sizes
 
         layers_size = []
         for i, size in enumerate(layer_sizes):

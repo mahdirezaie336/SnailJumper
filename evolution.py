@@ -1,4 +1,5 @@
 import copy
+import random
 import time
 
 from player import Player
@@ -42,8 +43,19 @@ class Evolution:
 
             return new_players
 
-    def cross_over(self):
-        pass
+    def cross_over(self, parent1: Player, parent2: Player):
+        """
+        Performs a uniform cross over on two parents and makes two children.
+        """
+        player1, player2 = parent1.clone(), parent2.clone()
+        for i, size in enumerate(player1.nn.layer_sizes):
+            if i == 0:
+                continue
+            for j in range(size):
+                do_cross_over = random.random() < self.cross_over_probability
+                if do_cross_over:
+                    player1.swap_perceptron(player2. i, j)
+        return player1, player2
 
     def clone_player(self, player):
         """
