@@ -139,3 +139,15 @@ class Player(pygame.sprite.Sprite):
         """
         for i, player_surface in enumerate(self.player_walk):
             self.player_walk[i] = pygame.transform.flip(player_surface, flip_x=True, flip_y=False)
+
+    def __gt__(self, other):
+        return self.fitness > other.fitness
+
+    def __lt__(self, other):
+        return self.fitness < other.fitness
+
+    def __ge__(self, other):
+        return self.fitness >= other.fitness
+
+    def __le__(self, other):
+        return self.fitness <= other.fitness
