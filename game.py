@@ -142,7 +142,7 @@ if __name__ == '__main__':
     game_mode = None
     start_time = 0
     best_score = 0
-    num_players = 300
+    num_players = 100
 
     background_surface = pygame.image.load('Graphics/Background.jpg').convert()
 
