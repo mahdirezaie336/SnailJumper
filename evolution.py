@@ -63,7 +63,7 @@ class Evolution:
             for j in range(size):
                 do_cross_over = random.random() < self.cross_over_probability
                 if do_cross_over:
-                    player1.swap_perceptron(player2. i, j)
+                    player1.swap_perceptron(player2, i-1, j)
         return player1, player2
 
     def clone_player(self, player):

@@ -17,7 +17,7 @@ class NeuralNetwork:
 
         layers_size = []
         for i, size in enumerate(layer_sizes):
-            if i == 1:
+            if i == 0:
                 continue
             prev = layer_sizes[i-1]
             layers_size.append((prev, size))
@@ -64,4 +64,4 @@ class NeuralNetwork:
         other_bias = other.biases[layer_number]
 
         self_layer[:, [p]], other_layer[:, [p]] = other_layer[:, [p]], self_layer[:, [p]]
-        self_bias[[p], :], other_bias[[p], :] = other_bias[[p], :], self_bias[[p], :]
+        self_bias[:, [p]], other_bias[:, [p]] = other_bias[:, [p]], self_bias[:, [p]]
