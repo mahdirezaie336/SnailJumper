@@ -53,7 +53,7 @@ class Evolution:
                     break
                 player1 = prev_players[i]
                 player2 = prev_players[i+1]
-                child1, child2 = self.cross_over(player1, player2)
+                child1, child2 = self.cross_over(player1, player2, co_type='single_point')
                 # Mutation
                 child1.mutate(self.mutation_probability)
                 child2.mutate(self.mutation_probability)
@@ -64,7 +64,7 @@ class Evolution:
 
     def cross_over(self, parent1: Player, parent2: Player, co_type='uniform') -> (Player, Player):
         """
-        Performs a uniform cross over on two parents and makes two children.
+        Performs a uniform or single point cross over on two parents and makes two children.
         """
         player1, player2 = parent1.clone(), parent2.clone()
 
