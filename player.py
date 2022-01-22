@@ -8,7 +8,7 @@ from nn import NeuralNetwork
 
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, game_mode, player_smartness=2):
+    def __init__(self, game_mode, player_smartness=3):
         super().__init__()
 
         # loading images
@@ -37,7 +37,7 @@ class Player(pygame.sprite.Sprite):
         if self.game_mode == "Neuroevolution":
             self.fitness = 0  # Initial fitness
 
-            layer_sizes = [2 * player_smartness + 2, 35, 15, 15, 2]
+            layer_sizes = [2 * player_smartness + 2, 30, 2]
             self.nn = NeuralNetwork(layer_sizes)
 
         self.player_smartness = player_smartness

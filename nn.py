@@ -53,6 +53,13 @@ class NeuralNetwork:
             result.append(o)
         return result
 
+    def get_perceptron_weights(self, layer_number, perceptron):
+        return self.weights[layer_number][:, [perceptron]], self.biases[layer_number][:, [perceptron]]
+
+    def set_perceptron_weights(self, layer_number, perceptron, weights, bias):
+        self.weights[layer_number][:, [perceptron]] = weights
+        self.biases[layer_number][:, [perceptron]] = bias
+
     def swap_perceptron(self, other, layer_number, p):
 
         if not isinstance(other, NeuralNetwork):
