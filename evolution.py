@@ -4,6 +4,7 @@ import time
 import numpy as np
 
 from player import Player
+from utils import roulette_wheel
 
 
 class Evolution:
@@ -12,7 +13,8 @@ class Evolution:
         self.cross_over_probability = cross_over_probability
         self.mutation_probability = 0.3
         self.log_file = "log.txt"
-        self.selection_mode = 'k-best'
+        self.selection_mode = 'roulette-wheel'
+        self.parent_selection_mode = 'all'
 
     def next_population_selection(self, players, num_players):
         """
@@ -33,11 +35,8 @@ class Evolution:
         if self.selection_mode == 'k-best':
             new_players = players[: num_players]
         elif self.selection_mode == 'roulette-wheel':
-            sum_fitness = sum([player.fitness for player in players])
-            prob = [player.fitness / sum_fitness for player in players]
-            for i in range(num_players):
-                choice = np.random.choice(players, p=prob)
-                new_players.append(choice)
+            for player in roulette_wheel(players, 'fitness', num_players):
+                new_players.append(player)
         elif self.selection_mode == 'SUS':
             sum_fitness = sum([player.fitness for player in players])
 
@@ -61,20 +60,23 @@ class Evolution:
                 log_file.writelines('')
             return [Player(self.game_mode) for _ in range(num_players)]
         else:
-            print('*******', prev_players[0].fitness)
             new_players = []
-            new_players = [player for player in prev_players[:len(prev_players)//10]]
-            for i in range(0, len(prev_players), 2):
-                if len(new_players) >= num_players:
-                    break
-                player1 = prev_players[i]
-                player2 = prev_players[i+1]
-                child1, child2 = self.cross_over(player1, player2, co_type='single_point')
-                # Mutation
-                child1.mutate(self.mutation_probability)
-                child2.mutate(self.mutation_probability)
-                new_players.append(child1)
-                new_players.append(child2)
+            if self.parent_selection_mode == 'all':
+                new_players.extend([player for player in prev_players[:len(prev_players)//10]])
+                for i in range(0, len(prev_players), 2):
+                    if len(new_players) >= num_players:
+                        break
+                    player1 = prev_players[i]
+                    player2 = prev_players[i+1]
+                    child1, child2 = self.cross_over(player1, player2, co_type='uniform')
+                    # Mutation
+                    child1.mutate(self.mutation_probability)
+                    child2.mutate(self.mutation_probability)
+                    new_players.append(child1)
+                    new_players.append(child2)
+
+            elif self.parent_selection_mode == 'roulette-wheel':
+                pass
 
             return new_players
 
