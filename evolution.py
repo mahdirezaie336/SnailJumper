@@ -35,7 +35,7 @@ class Evolution:
         if self.selection_mode == 'k-best':
             new_players = players[: num_players]
         elif self.selection_mode == 'roulette-wheel':
-            for player in roulette_wheel(players, 'fitness', num_players):
+            for player in roulette_wheel([player.clone() for player in players], 'fitness', num_players):
                 new_players.append(player)
         elif self.selection_mode == 'SUS':
             sum_fitness = sum([player.fitness for player in players])
