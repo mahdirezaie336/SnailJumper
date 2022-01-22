@@ -1,6 +1,7 @@
 import copy
 import random
 import time
+import numpy as np
 
 from player import Player
 
@@ -9,6 +10,7 @@ class Evolution:
     def __init__(self, cross_over_probability=0.5):
         self.game_mode = "Neuroevolution"
         self.cross_over_probability = cross_over_probability
+        self.mutation_probability = 0.1
 
     def next_population_selection(self, players, num_players):
         """
@@ -39,7 +41,6 @@ class Evolution:
             return [Player(self.game_mode) for _ in range(num_players)]
         else:
             print('*******', prev_players[0].fitness)
-            # TODO ( Parent selection and child generation )
             new_players = [player for player in prev_players[:len(prev_players)//10]]
             for i in range(0, len(prev_players), 2):
                 if len(new_players) >= num_players:
@@ -47,12 +48,15 @@ class Evolution:
                 player1 = prev_players[i]
                 player2 = prev_players[i+1]
                 child1, child2 = self.cross_over(player1, player2)
+                # Mutation
+                child1.mutate(self.mutation_probability)
+                child2.mutate(self.mutation_probability)
                 new_players.append(child1)
                 new_players.append(child2)
 
             return new_players
 
-    def cross_over(self, parent1: Player, parent2: Player):
+    def cross_over(self, parent1: Player, parent2: Player) -> (Player, Player):
         """
         Performs a uniform cross over on two parents and makes two children.
         """

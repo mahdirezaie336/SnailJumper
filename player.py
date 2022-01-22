@@ -8,6 +8,9 @@ from nn import NeuralNetwork
 
 
 class Player(pygame.sprite.Sprite):
+
+    nn: NeuralNetwork
+
     def __init__(self, game_mode, player_smartness=3):
         super().__init__()
 
@@ -154,6 +157,18 @@ class Player(pygame.sprite.Sprite):
         new_player.nn = copy.deepcopy(self.nn)
         new_player.fitness = self.fitness
         return new_player
+
+    def mutate(self, mutation_probability):
+        do_mutate = random.random() < mutation_probability
+        if do_mutate:
+            layer_number = random.randint(0, len(self.nn.weights) - 1)
+            perceptron_number = random.randint(0, self.nn.weights[layer_number].shape[1] - 1)
+            weights, bias = self.nn.get_perceptron_weights(layer_number, perceptron_number)
+
+            weights += np.random.normal(size=weights.shape) / 10
+            bias += np.random.normal(size=bias.shape) / 10
+
+            self.nn.set_perceptron_weights(layer_number, perceptron_number, weights, bias)
 
     def __copy__(self):
         return self.clone()
