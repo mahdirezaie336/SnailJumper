@@ -12,6 +12,7 @@ class Evolution:
         self.cross_over_probability = cross_over_probability
         self.mutation_probability = 0.3
         self.log_file = "log.txt"
+        self.selection_mode = 'k-best'
 
     def next_population_selection(self, players, num_players):
         """
@@ -22,14 +23,29 @@ class Evolution:
         :param num_players: number of players that we return
         """
         players.sort()
+
+        # Logging
         print('best and worst fitness', players[0].fitness, players[-1].fitness)
         with open(self.log_file, 'a') as log_file:
-            log_file.writelines(str(players[0].fitness) + ' ' + str(players[-1].fitness)+ '\n')
+            log_file.writelines(str(players[0].fitness) + ' ' + str(players[-1].fitness) + '\n')
+
+        new_players = []
+        if self.selection_mode == 'k-best':
+            new_players = players[: num_players]
+        elif self.selection_mode == 'roulette-wheel':
+            sum_fitness = sum([player.fitness for player in players])
+            prob = [player.fitness / sum_fitness for player in players]
+            for i in range(num_players):
+                choice = np.random.choice(players, p=prob)
+                new_players.append(choice)
+        elif self.selection_mode == 'SUS':
+            sum_fitness = sum([player.fitness for player in players])
+
         # TODO (Additional: Implement roulette wheel here)
         # TODO (Additional: Implement SUS here)
 
         # TODO (Additional: Learning curve)
-        return players[: num_players]
+        return new_players
 
     def generate_new_population(self, num_players, prev_players=None):
         """
