@@ -28,9 +28,10 @@ class Evolution:
         players.sort()
 
         # Logging
-        print('best and worst fitness', players[0].fitness, players[-1].fitness)
+        mean = sum([player.fitness for player in players]) / len(players)
+        print('best and worst fitness, mean', players[0].fitness, players[-1].fitness, mean)
         with open(self.log_file, 'a') as log_file:
-            log_file.writelines(str(players[0].fitness) + ' ' + str(players[-1].fitness) + '\n')
+            log_file.writelines(str(players[0].fitness) + ' ' + str(players[-1].fitness) + ' ' + str(mean) + '\n')
 
         players_clone = [player.clone() for player in players]
         new_players = []
@@ -43,7 +44,6 @@ class Evolution:
             for player in sus(players_clone, 'fitness', num_players):
                 new_players.append(player)
 
-        # TODO (Additional: Learning curve)
         return new_players
 
     def generate_new_population(self, num_players, prev_players=None):

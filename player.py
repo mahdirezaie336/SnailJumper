@@ -11,7 +11,7 @@ class Player(pygame.sprite.Sprite):
 
     nn: NeuralNetwork
 
-    def __init__(self, game_mode, player_smartness=2):
+    def __init__(self, game_mode, player_smartness=3):
         super().__init__()
 
         # loading images
