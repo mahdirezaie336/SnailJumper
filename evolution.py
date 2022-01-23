@@ -4,7 +4,7 @@ import time
 import numpy as np
 
 from player import Player
-from utils import roulette_wheel, sus
+from utils import roulette_wheel, sus, choose_pairs
 
 
 class Evolution:
@@ -14,7 +14,8 @@ class Evolution:
         self.mutation_probability = 0.3
         self.log_file = "log.txt"
         self.selection_mode = 'SUS'
-        self.parent_selection_mode = 'all'
+        self.parent_selection_mode = 'SUS'
+        self.cross_over_type = 'uniform'
 
     def next_population_selection(self, players, num_players):
         """
@@ -61,21 +62,30 @@ class Evolution:
         else:
             new_players = []
             if self.parent_selection_mode == 'all':
-                new_players.extend([player for player in prev_players[:len(prev_players)//10]])
-                for i in range(0, len(prev_players), 2):
-                    if len(new_players) >= num_players:
-                        break
-                    player1 = prev_players[i]
-                    player2 = prev_players[i+1]
-                    child1, child2 = self.cross_over(player1, player2, co_type='uniform')
-                    # Mutation
-                    child1.mutate(self.mutation_probability)
-                    child2.mutate(self.mutation_probability)
+                k = 10
+                new_players.extend([player for player in prev_players[:k]])
+                for player1, player2 in choose_pairs(prev_players, num_players - k):
+                    child1, child2 = self.cross_over(player1, player2, co_type=self.cross_over_type)
                     new_players.append(child1)
                     new_players.append(child2)
 
             elif self.parent_selection_mode == 'roulette-wheel':
-                pass
+                chose = [player for player in roulette_wheel(prev_players, 'fitness', num_players)]
+                for player1, player2 in choose_pairs(chose, num_players):
+                    child1, child2 = self.cross_over(player1, player2, co_type=self.cross_over_type)
+                    new_players.append(child1)
+                    new_players.append(child2)
+
+            elif self.parent_selection_mode == 'SUS':
+                chose = [player for player in sus(prev_players, 'fitness', num_players)]
+                for player1, player2 in choose_pairs(chose, num_players):
+                    child1, child2 = self.cross_over(player1, player2, co_type=self.cross_over_type)
+                    new_players.append(child1)
+                    new_players.append(child2)
+
+            # Mutation
+            for player in new_players:
+                player.mutate(self.mutation_probability)
 
             return new_players
 
