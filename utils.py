@@ -1,4 +1,5 @@
 import numpy as np
+from copy import deepcopy
 
 
 def roulette_wheel(items, attr, number):
@@ -23,6 +24,20 @@ def sus(items, attr, number):
             current_index += 1
             current_item = items[current_index]
             weight += getattr(current_item, attr)
+
+
+def q_tournament(items, attr, number, q=2):
+    for tournament_number in range(number):
+        chosen = []
+        for i in range(q):
+            chosen.append(np.random.choice(items))
+
+        best = chosen[0]
+        for item in items:
+            if getattr(item, attr) > getattr(best, attr):
+                best = item
+
+        yield best
 
 
 def choose_pairs(items, number):

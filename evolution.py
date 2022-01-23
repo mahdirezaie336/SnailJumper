@@ -4,7 +4,7 @@ import time
 import numpy as np
 
 from player import Player
-from utils import roulette_wheel, sus, choose_pairs
+from utils import roulette_wheel, sus, choose_pairs, q_tournament
 
 
 class Evolution:
@@ -61,31 +61,34 @@ class Evolution:
             return [Player(self.game_mode) for _ in range(num_players)]
         else:
             new_players = []
+            chosen = []
             if self.parent_selection_mode == 'all':
                 k = 10
                 new_players.extend([player for player in prev_players[:k]])
                 for player1, player2 in choose_pairs(prev_players, num_players - k):
                     child1, child2 = self.cross_over(player1, player2, co_type=self.cross_over_type)
+                    child1.mutate(self.mutation_probability)
+                    child2.mutate(self.mutation_probability)
                     new_players.append(child1)
                     new_players.append(child2)
+                return new_players
 
             elif self.parent_selection_mode == 'roulette-wheel':
-                chose = [player for player in roulette_wheel(prev_players, 'fitness', num_players)]
-                for player1, player2 in choose_pairs(chose, num_players):
-                    child1, child2 = self.cross_over(player1, player2, co_type=self.cross_over_type)
-                    new_players.append(child1)
-                    new_players.append(child2)
+                chosen = [player for player in roulette_wheel(prev_players, 'fitness', num_players)]
 
             elif self.parent_selection_mode == 'SUS':
-                chose = [player for player in sus(prev_players, 'fitness', num_players)]
-                for player1, player2 in choose_pairs(chose, num_players):
-                    child1, child2 = self.cross_over(player1, player2, co_type=self.cross_over_type)
-                    new_players.append(child1)
-                    new_players.append(child2)
+                chosen = [player for player in sus(prev_players, 'fitness', num_players)]
 
-            # Mutation
-            for player in new_players:
-                player.mutate(self.mutation_probability)
+            elif self.parent_selection_mode == 'q-tournament':
+                chosen = [player for player in q_tournament(prev_players, 'fitness', num_players)]
+
+            # Cross over and mutation
+            for player1, player2 in choose_pairs(chosen, num_players):
+                child1, child2 = self.cross_over(player1, player2, co_type=self.cross_over_type)
+                child1.mutate(self.mutation_probability)
+                child2.mutate(self.mutation_probability)
+                new_players.append(child1)
+                new_players.append(child2)
 
             return new_players
 
@@ -104,7 +107,7 @@ class Evolution:
                     if do_cross_over:
                         player1.swap_perceptron(player2, i-1, j)
 
-        elif co_type == 'single_point':
+        elif co_type == 'single-point':
             for layer_number, layer in enumerate(player1.nn.weights):
                 do_cross_over = random.random() < self.cross_over_probability
                 if do_cross_over:
