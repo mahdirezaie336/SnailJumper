@@ -7,7 +7,7 @@ with open('log.txt', 'r') as file:
     minimum = []
     mean = []
     for row in file:
-        M, m, me = [int(i) for i in row.split()]
+        M, m, me = [float(i) for i in row.split()]
         maximum.append(M)
         minimum.append(m)
         mean.append(me)

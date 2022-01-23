@@ -62,16 +62,13 @@ class Evolution:
         else:
             new_players = []
             chosen = []
+
+            k = 10
+            new_players.extend([player for player in prev_players[:k]])
+            num_players -= k
+
             if self.parent_selection_mode == 'all':
-                k = 10
-                new_players.extend([player for player in prev_players[:k]])
-                for player1, player2 in choose_pairs(prev_players, num_players - k):
-                    child1, child2 = self.cross_over(player1, player2, co_type=self.cross_over_type)
-                    child1.mutate(self.mutation_probability)
-                    child2.mutate(self.mutation_probability)
-                    new_players.append(child1)
-                    new_players.append(child2)
-                return new_players
+                chosen = prev_players
 
             elif self.parent_selection_mode == 'roulette-wheel':
                 chosen = [player for player in roulette_wheel(prev_players, 'fitness', num_players)]
