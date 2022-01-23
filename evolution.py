@@ -4,7 +4,7 @@ import time
 import numpy as np
 
 from player import Player
-from utils import roulette_wheel
+from utils import roulette_wheel, sus
 
 
 class Evolution:
@@ -13,7 +13,7 @@ class Evolution:
         self.cross_over_probability = cross_over_probability
         self.mutation_probability = 0.3
         self.log_file = "log.txt"
-        self.selection_mode = 'roulette-wheel'
+        self.selection_mode = 'SUS'
         self.parent_selection_mode = 'all'
 
     def next_population_selection(self, players, num_players):
@@ -31,17 +31,16 @@ class Evolution:
         with open(self.log_file, 'a') as log_file:
             log_file.writelines(str(players[0].fitness) + ' ' + str(players[-1].fitness) + '\n')
 
+        players_clone = [player.clone() for player in players]
         new_players = []
         if self.selection_mode == 'k-best':
-            new_players = players[: num_players]
+            new_players = players_clone[: num_players]
         elif self.selection_mode == 'roulette-wheel':
-            for player in roulette_wheel([player.clone() for player in players], 'fitness', num_players):
+            for player in roulette_wheel(players_clone, 'fitness', num_players):
                 new_players.append(player)
         elif self.selection_mode == 'SUS':
-            sum_fitness = sum([player.fitness for player in players])
-
-        # TODO (Additional: Implement roulette wheel here)
-        # TODO (Additional: Implement SUS here)
+            for player in sus(players_clone, 'fitness', num_players):
+                new_players.append(player)
 
         # TODO (Additional: Learning curve)
         return new_players

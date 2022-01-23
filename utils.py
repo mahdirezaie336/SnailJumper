@@ -20,5 +20,6 @@ def sus(items, attr, number):
             yield current_item
             i += step
         else:
-            weight += getattr(current_item, attr)
             current_index += 1
+            current_item = items[current_index]
+            weight += getattr(current_item, attr)
