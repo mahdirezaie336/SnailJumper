@@ -166,10 +166,9 @@ class Player(pygame.sprite.Sprite):
             perceptron_number = random.randint(0, self.nn.weights[layer_number].shape[1] - 1)
             weights, bias = self.nn.get_perceptron_weights(layer_number, perceptron_number)
 
-            weights += np.random.normal(size=weights.shape) / 10
-            bias += np.random.normal(size=bias.shape) / 10
-
-            self.nn.set_perceptron_weights(layer_number, perceptron_number, weights, bias)
+            new_weights = np.random.normal(size=weights.shape)
+            new_bias = np.random.normal(size=bias.shape)
+            self.nn.set_perceptron_weights(layer_number, perceptron_number, new_weights, new_bias)
 
     def __copy__(self):
         return self.clone()

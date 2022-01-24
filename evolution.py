@@ -63,7 +63,7 @@ class Evolution:
             new_players = []
             chosen = []
 
-            k = 10
+            k = 0
             new_players.extend([player for player in prev_players[:k]])
             num_players -= k
 
