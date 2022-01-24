@@ -5,13 +5,14 @@ import pygame
 import numpy as np
 from variables import global_variables
 from nn import NeuralNetwork
+from config import *
 
 
 class Player(pygame.sprite.Sprite):
 
     nn: NeuralNetwork
 
-    def __init__(self, game_mode, player_smartness=2):
+    def __init__(self, game_mode, player_smartness=player_smartness):
         super().__init__()
 
         # loading images

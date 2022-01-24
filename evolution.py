@@ -5,17 +5,18 @@ import numpy as np
 
 from player import Player
 from utils import roulette_wheel, sus, choose_pairs, q_tournament
+from config import *
 
 
 class Evolution:
-    def __init__(self, cross_over_probability=0.5):
+    def __init__(self, cross_over_probability=cross_over_probability):
         self.game_mode = "Neuroevolution"
         self.cross_over_probability = cross_over_probability
-        self.mutation_probability = 0.3
+        self.mutation_probability = mutation_probability
         self.log_file = "log.txt"
-        self.selection_mode = 'SUS'
-        self.parent_selection_mode = 'SUS'
-        self.cross_over_type = 'uniform'
+        self.selection_mode = selection_mode
+        self.parent_selection_mode = parent_selection_mode
+        self.cross_over_type = cross_over_type
 
     def next_population_selection(self, players, num_players):
         """
@@ -63,7 +64,7 @@ class Evolution:
             new_players = []
             chosen = []
 
-            k = 0
+            k = k_best_from_previous_generation
             new_players.extend([player for player in prev_players[:k]])
             num_players -= k
 
@@ -105,6 +106,21 @@ class Evolution:
                         player1.swap_perceptron(player2, i-1, j)
 
         elif co_type == 'single-point':
+            for layer_number, layer in enumerate(player1.nn.weights):
+                do_cross_over = random.random() < self.cross_over_probability
+                if do_cross_over:
+                    point = random.randint(0, layer.shape[1] - 1)
+                    first_part = random.random() < 0.5
+                    if first_part:
+                        r = range(0, point)
+                    else:
+                        r = range(point, layer.shape[1])
+
+                    for perceptron in r:
+                        player1.swap_perceptron(player2, layer_number, perceptron)
+
+
+        elif co_type == 'double-point':
             for layer_number, layer in enumerate(player1.nn.weights):
                 do_cross_over = random.random() < self.cross_over_probability
                 if do_cross_over:
