@@ -44,6 +44,9 @@ class Evolution:
         elif self.selection_mode == 'SUS':
             for player in sus(players_clone, 'fitness', num_players):
                 new_players.append(player)
+        elif self.selection_mode == 'q-tournament':
+            for player in q_tournament(players_clone, 'fitness', num_players):
+                new_players.append(player)
 
         return new_players
 
@@ -118,7 +121,6 @@ class Evolution:
 
                     for perceptron in r:
                         player1.swap_perceptron(player2, layer_number, perceptron)
-
 
         elif co_type == 'double-point':
             for layer_number, layer in enumerate(player1.nn.weights):

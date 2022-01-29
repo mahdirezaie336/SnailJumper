@@ -41,7 +41,7 @@ class Player(pygame.sprite.Sprite):
         if self.game_mode == "Neuroevolution":
             self.fitness = 0  # Initial fitness
 
-            layer_sizes = [2 * player_smartness + 2, 40, 3]
+            layer_sizes = [2 * player_smartness + 2, 30, 3]
             self.nn = NeuralNetwork(layer_sizes)
 
         self.player_smartness = player_smartness
@@ -50,7 +50,7 @@ class Player(pygame.sprite.Sprite):
         arr = [player_x / 604, player_y / 656]
         for i in range(self.player_smartness):
             if i >= len(obstacles):
-                arr.append(-1.0)
+                arr.append(1.0)
                 arr.append(0.0)
             else:
                 arr.append(obstacles[i]['x'] / 604)
@@ -161,15 +161,27 @@ class Player(pygame.sprite.Sprite):
         return new_player
 
     def mutate(self, mutation_probability):
-        do_mutate = random.random() < mutation_probability
-        if do_mutate:
-            layer_number = random.randint(0, len(self.nn.weights) - 1)
-            perceptron_number = random.randint(0, self.nn.weights[layer_number].shape[1] - 1)
-            weights, bias = self.nn.get_perceptron_weights(layer_number, perceptron_number)
+        if mutation_type == "random-regenerate":
+            do_mutate = random.random() < mutation_probability
+            if do_mutate:
+                for layer_number, _ in enumerate(self.nn.weights):
+                    for perceptron_number in range(self.nn.weights[layer_number].shape[1]):
+                        do_mutate = random.random() < mutation_probability
+                        if do_mutate:
+                            weights, bias = self.nn.get_perceptron_weights(layer_number, perceptron_number)
+                            new_weights = np.random.normal(size=weights.shape)
+                            new_bias = np.random.normal(size=bias.shape)
+                            self.nn.set_perceptron_weights(layer_number, perceptron_number, new_weights, new_bias)
 
-            new_weights = np.random.normal(size=weights.shape)
-            new_bias = np.random.normal(size=bias.shape)
-            self.nn.set_perceptron_weights(layer_number, perceptron_number, new_weights, new_bias)
+        elif mutation_type == "gaussian-noise":
+            do_mutate = random.random() < mutation_probability
+            if do_mutate:
+                for layer_number, layer in enumerate(self.nn.weights):
+                    bias = self.nn.biases[layer_number]
+                    layer += np.random.normal(size=layer.shape) / 10
+                    bias += np.random.normal(size=bias.shape) / 10
+                    self.nn.weights[layer_number] = layer
+                    self.nn.biases[layer_number] = bias
 
     def __copy__(self):
         return self.clone()
